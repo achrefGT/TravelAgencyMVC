@@ -13152,11 +13152,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TransportMVC\\TransportMVC.csproj",
+      "projectUniqueName": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TravelAgencyMVC\\TransportMVC.csproj",
       "projectName": "TransportMVC",
-      "projectPath": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TransportMVC\\TransportMVC.csproj",
+      "projectPath": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TravelAgencyMVC\\TransportMVC.csproj",
       "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TransportMVC\\obj\\",
+      "outputPath": "C:\\Users\\LENOVO\\Desktop\\Projects\\C#\\TravelAgencyMVC\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config"
