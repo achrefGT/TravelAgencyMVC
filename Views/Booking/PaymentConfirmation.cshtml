@@ -1,0 +1,16 @@
+@model Booking
+
+<div>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br><br>
+    <h2>Payment Confirmation</h2>
+</div>
+
+<div class="container">
+    <p><strong>Booking ID:</strong> @Model.Id</p>
+    @if (TempData["PaymentSuccess"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["PaymentSuccess"]
+        </div>
+    }
+</div>

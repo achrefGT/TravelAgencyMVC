@@ -28,7 +28,11 @@ namespace TransportMVC.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Coupons.ToListAsync());
+            var coupons = await _context.Coupons
+                                        .Include(b => b.Packages)
+                                        .ToListAsync();
+
+            return View(coupons);
         }
 
         // GET: Coupon/Details/5

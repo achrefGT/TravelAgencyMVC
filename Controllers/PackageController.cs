@@ -52,6 +52,7 @@ namespace TransportMVC.Controllers
                 .Include(d => d.LastModifiedBy) 
                 .Include(d => d.Coupons)
                 .Include(d => d.Reviews)
+                    .ThenInclude(r => r.CreatedBy)
                 .Include(d => d.Coordinator)
                 .Include(d => d.Destination)
                 .FirstOrDefaultAsync(m => m.Id == id);

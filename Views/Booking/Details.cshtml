@@ -1,10 +1,13 @@
 @model BookingReviewViewModel
 @using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 
 @{
     ViewData["Title"] = "Details";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <style>
@@ -23,7 +26,44 @@
     <div class="card mb-4 shadow">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4>Booking</h4>
-            <a href="@Url.Action("Edit", "Booking", new { id = Model.Booking.Id })" class="btn btn-primary">Edit</a>   
+
+            <div class="btn-group" role="group" aria-label="Booking Actions">
+                @if (!Model.Booking.IsPaid && Model.Booking.State != BookingState.Cancelled && Model.Booking.CreatedBy == currentUser)
+                {
+                    <a asp-action="Pay" asp-route-id="@Model.Booking.Id" class="btn btn-primary">Pay</a>
+                }
+
+                @if (Model.Booking.State == BookingState.Pending || (isAdmin && Model.Booking.State != BookingState.Cancelled))
+                {
+                    <a asp-action="Cancel" asp-route-id="@Model.Booking.Id" class="btn btn-outline-danger">Cancel</a>
+
+                    @if (isAdmin && Model.Booking.IsPaid && Model.Booking.State == BookingState.Pending)
+                    {
+                        <a asp-action="Confirm" asp-route-id="@Model.Booking.Id" class="btn btn-outline-primary">Confirm</a>
+                    }
+                }
+
+                @if (isAdmin && Model.Booking.State != BookingState.Confirmed)
+                {
+                    <a asp-action="Delete" asp-route-id="@Model.Booking.Id" class="btn btn-danger">Delete</a>
+                }
+
+                @if (Model.Booking.State != BookingState.Confirmed && Model.Booking.CreatedBy == currentUser)
+                {
+                    <a href="@Url.Action("Edit", "Booking", new { id = Model.Booking.Id, packageId = Model.Booking.AssociatedPackageId })" class="btn btn-outline-primary">Edit</a>
+                }
+            </div>
+
+
+
+
+
+
+
+
+
+
+               
         </div>
         <div class="card-body">
             <div class="row">
@@ -80,15 +120,15 @@
     <div class="card-body">
         <table class="table">
                 <tbody>
-                    @if (Model.Booking.AssociatedPackage.Reviews != null && Model.Booking.AssociatedPackage.Reviews.Any())
+                     @if (Model.Booking.AssociatedPackage.Reviews != null && Model.Booking.AssociatedPackage.Reviews.Any())
                     {
                         @foreach (var review in Model.Booking.AssociatedPackage.Reviews)
                         {
                             <tr>
                                 <td style="width: 20%;">
-                                    <strong>@review.CreatedBy?.UserName</strong><br>@review.Date
+                                    <strong>@review.CreatedBy?.UserName</strong><br>@review.LastModifiedAt
                                 </td>
-                                <td style="width: 20%;">
+                                <td style="width: 15%;">
                                     <div class="ratings">
                                         @for (var i = 1; i <= 5; i++)
                                         {
@@ -96,8 +136,15 @@
                                         }
                                     </div>
                                 </td>
-                                <td style="width: 60%;">
-                                    @review.Text<br>
+                                <td style="width: 55%;">
+                                    @review.Text
+                                </td>
+                                <td style="width: 10%;">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("Delete", "Review", new { id = review.Id })" class="btn btn-sm btn-danger">Delete</a>
+                                    }
+
                                 </td>
                             </tr>
                         }

@@ -33,12 +33,14 @@
     }
 </style>
 
-<h1>Create</h1>
-
-<h4>Booking</h4>
+<div>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br><br>
+    <h2>Booking</h2>
+</div>
 <hr />
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-1"></div>
+    <div class="col-md-7">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if (ViewBag.Mode == "create"){
@@ -102,10 +104,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

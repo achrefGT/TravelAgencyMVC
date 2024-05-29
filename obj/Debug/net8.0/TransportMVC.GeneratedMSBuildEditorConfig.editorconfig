@@ -66,6 +66,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5pc3RyYXRpb25cTWFuYWdlVXNlclJvbGVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Booking/Cancel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va2luZ1xDYW5jZWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Booking/Confirm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va2luZ1xDb25maXJtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Booking/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va2luZ1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
@@ -84,6 +92,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Booking/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va2luZ1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Booking/PaymentConfirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9va2luZ1xQYXltZW50Q29uZmlybWF0aW9uLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/LENOVO/Desktop/Projects/C\#/TravelAgencyMVC/Views/Coordinator/Create.cshtml]

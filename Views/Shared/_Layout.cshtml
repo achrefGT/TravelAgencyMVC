@@ -91,9 +91,6 @@
                             <a class="nav-link" asp-area="" asp-controller="Booking" asp-action="Index">Booking</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Review" asp-action="Index">Review</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="WishForm" asp-action="Index">WishForm</a>
                         </li>
                         @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))

@@ -46,25 +46,34 @@ namespace TransportMVC.Controllers
                 return NotFound();
             }
 
-            var booking = await _context.Bookings
-                .Include(d => d.CreatedBy) 
-                .Include(d => d.LastModifiedBy) 
+            var bookingQuery = _context.Bookings
+                .Include(d => d.CreatedBy)
+                .Include(d => d.LastModifiedBy)
                 .Include(d => d.AssociatedPackage)
-                .Include(d => d.AssociatedPackage.Destination)
-                .Include(d => d.AssociatedPackage.Reviews)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .ThenInclude(p => p.Destination);
 
+            var booking = await bookingQuery
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (booking == null)
             {
                 return NotFound();
             }
 
-            BookingReviewViewModel model = new BookingReviewViewModel();
-            model.Booking=booking;
-            
+            await _context.Entry(booking.AssociatedPackage)
+                .Collection(p => p.Reviews)
+                .Query()
+                .Include(r => r.CreatedBy)
+                .LoadAsync();
+
+            BookingReviewViewModel model = new BookingReviewViewModel
+            {
+                Booking = booking
+            };
+
             return View(model);
         }
+
 
         // GET: Booking/Create
         [Authorize]
@@ -178,15 +187,15 @@ namespace TransportMVC.Controllers
 
         // GET: Booking/Edit/5
         [Authorize]
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid? id, Guid? packageId)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var packages = await _context.Packages.ToListAsync();
-            
-            ViewBag.Packages = packages;
+
+            ViewBag.Package = packageId;
+            ViewBag.Mode = "Book";
 
             var booking = await _context.Bookings.FindAsync(id);
             if (booking == null)
@@ -367,6 +376,173 @@ namespace TransportMVC.Controllers
         {
             return _context.Bookings.Any(e => e.Id == id);
         }
+
+
+        [HttpGet, ActionName("Pay")]
+        [Authorize]
+        public async Task<IActionResult> Pay(Guid id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {   
+                booking.IsPaid = true;
+
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    if (currentUser == null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    booking.LastModifiedBy = currentUser;
+                    booking.LastModifiedAt = DateTime.UtcNow;
+
+                _context.Bookings.Update(booking);
+                await _context.SaveChangesAsync();
+
+                TempData["PaymentSuccess"] = "Payment successful!";
+                return RedirectToAction(nameof(PaymentConfirmation), new { id = booking.Id });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                TempData["PaymentError"] = "An error occurred while processing the payment.";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        public async Task<IActionResult> PaymentConfirmation(Guid id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+            return View(booking);
+        }
+
+
+
+
+        // GET: Booking/Cancel/5
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return View(booking);
+        }
+
+        // POST: Booking/Cancel/5
+        [HttpPost, ActionName("Cancel")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> CancelConfirmed(Guid id)
+        {
+            try
+            {   
+                var booking = await _context.Bookings.FindAsync(id);
+                if (booking == null)
+                {
+                    return NotFound();
+                }
+
+                booking.State = BookingState.Cancelled;
+
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    if (currentUser == null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    booking.LastModifiedBy = currentUser;
+                    booking.LastModifiedAt = DateTime.UtcNow;
+
+                _context.Bookings.Update(booking);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500); 
+            }
+        }
+
+
+        // GET: Booking/Confirm/5
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Confirm(Guid id)
+        {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return View(booking);
+        }
+
+        // POST: Booking/Confirm/5
+        [HttpPost, ActionName("Confirm")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ConfirmConfirmed(Guid id)
+        {
+            try
+            {   
+                var booking = await _context.Bookings.FindAsync(id);
+                if (booking == null)
+                {
+                    return NotFound();
+                }
+
+                booking.State = BookingState.Confirmed;
+
+                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+                    if (currentUser == null)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    booking.LastModifiedBy = currentUser;
+                    booking.LastModifiedAt = DateTime.UtcNow;
+
+                _context.Bookings.Update(booking);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(500); 
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
     }
         
 }

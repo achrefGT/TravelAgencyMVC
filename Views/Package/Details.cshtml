@@ -16,7 +16,7 @@
 </style>
 
 <div class="container py-4">
-    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br> 
     <h1 class="text-center mb-4">@ViewData["Title"]</h1>
 
     <div class="card mb-4 shadow">
@@ -24,8 +24,16 @@
             <h4>Package</h4>
             @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
             {
-                <a href="@Url.Action("Edit", "Package", new { id = Model.Id })" class="btn btn-primary">Edit</a>
+                <div class="btn-group">
+                    <a href="@Url.Action("Edit", "Package", new { id = Model.Id })" class="btn btn-secondary">Edit</a>
+                    <a href="@Url.Action("Create", "Booking", new { packageId = Model.Id })" class="btn btn-primary">Book</a>
+                </div>
             }
+            else
+            {
+                <a href="@Url.Action("Create", "Booking", new { packageId = Model.Id })" class="btn btn-primary">Book</a>
+            }
+
         </div>
         <div class="card-body">
             <div class="row">
@@ -121,9 +129,9 @@
                         {
                             <tr>
                                 <td style="width: 20%;">
-                                    <strong>@review.CreatedBy?.UserName</strong><br>@review.Date
+                                    <strong>@review.CreatedBy?.UserName</strong><br>@review.LastModifiedAt
                                 </td>
-                                <td style="width: 20%;">
+                                <td style="width: 15%;">
                                     <div class="ratings">
                                         @for (var i = 1; i <= 5; i++)
                                         {
@@ -131,8 +139,15 @@
                                         }
                                     </div>
                                 </td>
-                                <td style="width: 60%;">
-                                    @review.Text<br>
+                                <td style="width: 55%;">
+                                    @review.Text
+                                </td>
+                                <td style="width: 10%;">
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("Delete", "Review", new { id = review.Id })" class="btn btn-sm btn-danger">Delete</a>
+                                    }
+
                                 </td>
                             </tr>
                         }

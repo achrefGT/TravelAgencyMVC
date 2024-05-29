@@ -4,12 +4,16 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<div>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br><br>
+    <h2>Create Package</h2>
+</div>
 
-<h4>Package</h4>
+
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-1"></div>
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -50,9 +54,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Services" class="control-label"></label>
-                <input asp-for="Services" class="form-control" />
+                <textarea asp-for="Services" class="form-control"></textarea>
                 <span asp-validation-for="Services" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="TransportOption" class="control-label"></label>
                 <select asp-for="TransportOption" class="form-control">
@@ -101,9 +106,7 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

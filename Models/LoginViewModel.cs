@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 public class LoginViewModel
 {
-    [Required]
     [EmailAddress]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [Required]
     public string UserName { get; set; }
