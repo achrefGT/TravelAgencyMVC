@@ -127,13 +127,17 @@ namespace TransportMVC.Controllers
                 return View(package);
             }
 
-            package.Coordinator = await _context.Coordinators.FindAsync(package.CoordinatorId);
-
-            if (package.Coordinator == null)
+            if (package.CoordinatorId != null)
             {
-                ModelState.AddModelError("Coordinator", "Selected coordinator not found.");
-                return View(package);
+                package.Coordinator = await _context.Coordinators.FindAsync(package.CoordinatorId);
+
+                if (package.Coordinator == null)
+                {
+                    ModelState.AddModelError("Coordinator", "Selected coordinator not found.");
+                    return View(package);
+                }
             }
+            
 
             // Add the package to the context and save changes
             _context.Add(package);

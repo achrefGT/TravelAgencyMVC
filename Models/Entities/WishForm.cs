@@ -15,7 +15,7 @@ public class WishForm
     [MaxLength(50)]
     public string? Duration { get; set; }
 
-    public decimal? Budget { get; set; }
+    public decimal Budget { get; set; }
 
     public string? Interests { get; set; }
 
@@ -29,10 +29,17 @@ public class WishForm
 
     public User? CreatedBy { get; set; }
 
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public string? FormattedBudget
+    {
+        get { return Budget.ToString("F3") + " DT"; }
+    }
+
     
     public WishForm()
     {
         Id = Guid.NewGuid();
         SubmissionDate = DateTime.UtcNow;
+        Budget = 0;
     }
 }

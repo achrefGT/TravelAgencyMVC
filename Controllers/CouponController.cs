@@ -48,6 +48,7 @@ namespace TransportMVC.Controllers
                 .Include(d => d.CreatedBy) 
                 .Include(d => d.LastModifiedBy) 
                 .Include(d => d.Packages)
+                 .ThenInclude(p => p.Destination)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (coupon == null)
             {
@@ -82,47 +83,57 @@ namespace TransportMVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Print validation errors to the console
                 foreach (var state in ModelState.Values)
                 {
                     foreach (var error in state.Errors)
                     {
-                        var errorMessage = error.ErrorMessage;
-                        Console.WriteLine(errorMessage);
+                        Console.WriteLine(error.ErrorMessage);
                     }
                 }
-                
+
+                ViewBag.Mode = "select";
+                ViewBag.Packages = await _context.Packages.ToListAsync();
                 return View(coupon);
             }
-            if (ModelState.IsValid)
+
+            if (coupon.ExpirationDate <= DateTime.Today)
             {
-                var currentUser = await _userManager.GetUserAsync(HttpContext.User);
-                if (currentUser == null)
-                {
-                    // Handle the case where the current user is not found
-                    return RedirectToAction(nameof(Index));
-                }
+                ViewBag.ErrorMessage = "The expiration date must be superior to the current date.";
+                ViewBag.Mode = "select";
+                ViewBag.Packages = await _context.Packages.ToListAsync();
+                return View(coupon);
+            }
 
-                coupon.CreatedBy = currentUser;
-                coupon.LastModifiedBy = currentUser;
+            if (await _context.Coupons.AnyAsync(c => c.Code == coupon.Code))
+            {
+                ViewBag.ErrorMessage = "A coupon with this code already exists.";
+                ViewBag.Mode = "select";
+                ViewBag.Packages = await _context.Packages.ToListAsync();
+                return View(coupon);
+            }
 
-                // Retrieve the selected packages and associate them with the coupon
-                if (Request.Form["Packages"].Count > 0)
-                {
-                    var selectedPackageIds = Request.Form["Packages"].Select(Guid.Parse).ToList();
-                    coupon.Packages = await _context.Packages.Where(p => selectedPackageIds.Contains(p.Id)).ToListAsync();
-                }
-
-                // Add the coupon to the database
-                _context.Add(coupon);
-
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-
+            var currentUser = await _userManager.GetUserAsync(HttpContext.User);
+            if (currentUser == null)
+            {
                 return RedirectToAction(nameof(Index));
             }
-            return View(coupon);
+
+            coupon.CreatedBy = currentUser;
+            coupon.LastModifiedBy = currentUser;
+
+            if (Request.Form["Packages"].Count > 0)
+            {
+                var selectedPackageIds = Request.Form["Packages"].Select(Guid.Parse).ToList();
+                coupon.Packages = await _context.Packages.Where(p => selectedPackageIds.Contains(p.Id)).ToListAsync();
+            }
+
+            _context.Add(coupon);
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Coupon/Edit/5
         [Authorize(Roles = "Admin")]

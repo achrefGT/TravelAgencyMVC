@@ -38,6 +38,7 @@ namespace TransportMVC.Controllers
 
             var coordinator = await _context.Coordinators
                 .Include(d => d.Packages)
+                .ThenInclude(p => p.Destination)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (coordinator == null)
             {
@@ -134,6 +135,7 @@ namespace TransportMVC.Controllers
             }
 
             var coordinator = await _context.Coordinators
+                .Include(c => c.Packages)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (coordinator == null)
             {

@@ -75,8 +75,13 @@ public class Package
 
     public Coordinator? Coordinator { get; set; }
 
-    [ForeignKey("ReceiverId")]
     public Guid? CoordinatorId { get; set; }
+
+    [NotMapped]
+    public string? FormattedBudget
+    {
+        get { return Budget.ToString("F3") + " DT"; }
+    }
 
     public Package()
     {

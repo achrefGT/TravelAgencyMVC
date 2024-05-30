@@ -91,8 +91,8 @@ namespace TransportMVC.Data
 
         modelBuilder.Entity<Package>()
             .HasOne(p => p.Coordinator)                    
-            .WithMany(u => u.Packages)
-            .HasForeignKey(n => n.CoordinatorId);
+            .WithMany(u => u.Packages);
+
 
         modelBuilder.Entity<Coordinator>()
             .HasIndex(e => e.Name)

@@ -11,67 +11,135 @@
         min-height: 100vh;
     }
 </style>
-<h1>Details</h1>
 
-<div class="des">
-    <h4>Destination</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            Image
-        </dt>
-        <dd class="col-sm-10">
-            <img src="@Model.ImageUrl" alt="Destination Image" />
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Country)
-        </dd>
-        
-        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-        {
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.CreatedAt)
-            </dd>
-            <dt class="col-sm-2">
-                Created By
-            </dt>
-            <dd class="col-sm-10">
-                @Model.CreatedBy?.UserName
-            </dd>
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.LastModifiedAt)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.LastModifiedAt)
-            </dd>
-            <dt class="col-sm-2">
-                Last modified By
-            </dt>
-            <dd class="col-sm-10">
-                @Model.LastModifiedBy?.UserName
-            </dd>
-        }
-    </dl>
+
+
+<div class="container py-4">
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br> 
+    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+
+    <div class="card mb-4 shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Destination</h4>
+            <div class="btn-group">
+                <a href="@Url.Action("Edit", "Coupon", new { id = Model.Id })" class="btn btn-secondary">Edit</a>
+                <a href="@Url.Action("Delete", "Coupon", new { id = Model.Id })" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <img src="@Model.ImageUrl" class="img-fluid rounded img-center" alt="Destination Image">
+                </div>
+                <div class="col-md-8">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Country)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Country)
+                        </dd>
+                        
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.CreatedAt)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.CreatedAt)
+                            </dd>
+                            <dt class="col-sm-4">
+                                Created By
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Model.CreatedBy?.UserName
+                            </dd>
+                            <dt class="col-sm-4">
+                                @Html.DisplayNameFor(model => model.LastModifiedAt)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.LastModifiedAt)
+                            </dd>
+                            <dt class="col-sm-4">
+                                Last modified By
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Model.LastModifiedBy?.UserName
+                            </dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
-<div>
-    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin")){<a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>}|
-    <a asp-action="Index">Back to List</a>
+
+<div class="card mb-4 shadow">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4>Packages</h4>
+        <a href="@Url.Action("Index", "Package")" class="btn btn-primary">Add Package</a>
+    </div>
+    <div class="card-body">
+        <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @if (Model.Packages != null && Model.Packages.Any())
+                {
+                    foreach (var package in Model.Packages)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow">
+                                <a href="@Url.Action("Details","Package", new { id = package.Id })" class="position-relative">
+                                    <img src="@package.Destination?.ImageUrl" class="card-img-top" alt="@package.Destination?.Name">
+                                    <div class="category-box bg-success text-white position-absolute">
+                                        @package.Category
+                                    </div>
+                                </a>
+                                <div class="card-body">
+                                    <h2 class="card-title"><a asp-controller="Package" asp-action="Details" asp-route-id="@package.Id">@package.Name</a></h2>
+                                    <table class="table table-sm table-borderless">
+                                        <tbody>
+                                            <tr>
+                                                <th scope="row"><i class="fas fa-calendar-alt me-2"></i>Start Date</th>
+                                                <td>@package.StartDate.ToString("MMM dd, yyyy")</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"><i class="fas fa-money-bill-alt me-2"></i>Budget</th>
+                                                <td>@package.FormattedBudget</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"><i class="fas fa-clock me-2"></i>Duration</th>
+                                                <td>@package.Duration</td>
+                                            </tr>
+                                            <tr>
+                                                <th scope="row"><i class="fas fa-location-arrow me-2"></i>Destination</th>
+                                                <td>@package.Destination?.Name</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center">
+                        <p>No Packages available for this destination.</p>
+                    </div>  
+                }
+            </div>
+        </div>
+    </div>
 </div>

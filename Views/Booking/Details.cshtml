@@ -84,7 +84,7 @@
                         <dt class="col-sm-4">Payment Method</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.PaymentMethod)</dd>
                         <dt class="col-sm-4">Total Amount</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.TotalAmount) DT</dd>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.FormattedTotalAmount)</dd>
                         <dt class="col-sm-4">Duration</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.Booking.AssociatedPackage.Duration)</dd>
                         <dt class="col-sm-4">Transport Option</dt>

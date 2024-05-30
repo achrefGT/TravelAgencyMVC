@@ -5,80 +5,94 @@
 
 @{
     ViewData["Title"] = "Packages";
+    string filter = ViewContext.HttpContext.Request.Query["filter"];
 }
 
 <div class="container py-4">
     <h1 class="text-center mb-4">@ViewData["Title"]</h1>
 
-    
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="text-center mb-4">
+                <div class="btn-group" role="group">
+                    <a asp-action="Index" asp-route-filter="" class="btn  btn-primary @(string.IsNullOrEmpty(filter) ? "active" : "")">All</a>
+                    @foreach (Category category in Enum.GetValues(typeof(Category)))
+                    {
+                        <a asp-action="Index" asp-route-filter="@category.ToString()" class="btn btn-primary @(filter == category.ToString() ? "active" : "")">@category</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @if (User.IsInRole("Admin"))
         {
             <div class="col">
-                <div class="card shadow add-new-booking-card" style="width: 320px; height: 530px;">
-                    <a asp-action="Create" asp-controller="Package" class="d-flex justify-content-center align-items-center h-100 text-decoration-none">
-                        <div class="text-center">
-                            <i class="fas fa-plus fa-2x"></i>
-                            <p class="mt-2">Add New Package</p>
+                <a asp-action="Create" class="text-decoration-none">
+                    <div class="card shadow" style="height: 100%;">
+                        <div class="card-body text-center d-flex align-items-center justify-content-center">
+                             <div>
+                                <i class="fas fa-plus fa-2x"></i>
+                                <p class="mt-2">Create new Package</p>
+                            </div>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
             </div>
         }
 
-        @if (Model.Any())
+        @foreach (var item in Model)
         {
-            @foreach (var item in Model)
+            // Apply filtering logic here
+            if (!string.IsNullOrEmpty(filter) && item.Category != Enum.Parse<Category>(filter))
             {
-                <div class="col">
-                    <div class="card h-100 shadow">
-                        <a href="@Url.Action("Details", new { id = item.Id })" class="position-relative">
-                            <img src="@item.Destination?.ImageUrl" class="card-img-top" alt="@item.Destination?.Name">
-                            <div class="category-box bg-success text-white position-absolute">
-                                @item.Category
-                            </div>
-                        </a>
-                        <div class="card-body">
-                            <h2 class="card-title"><a asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h2>
-                            <table class="table table-sm table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <th scope="row"><i class="fas fa-calendar-alt me-2"></i>Start Date</th>
-                                        <td>@item.StartDate.ToString("MMM dd, yyyy")</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><i class="fas fa-money-bill-alt me-2"></i>Budget</th>
-                                        <td>@item.Budget.ToString("F3") DT</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><i class="fas fa-clock me-2"></i>Duration</th>
-                                        <td>@item.Duration</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row"><i class="fas fa-location-arrow me-2"></i>Destination</th>
-                                        <td>@item.Destination?.Name</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                continue; // Skip packages that don't match the selected category
+            }
+            
+            <div class="col">
+                <div class="card h-100 shadow">
+                    <a href="@Url.Action("Details", new { id = item.Id })" class="position-relative">
+                        <img src="@item.Destination?.ImageUrl" class="card-img-top" alt="@item.Destination?.Name">
+                        <div class="category-box bg-success text-white position-absolute">
+                            @item.Category
+                        </div>
+                    </a>
+                    <div class="card-body">
+                        <h2 class="card-title"><a asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h2>
+                        <table class="table table-sm table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row"><i class="fas fa-calendar-alt me-2"></i>Start Date</th>
+                                    <td>@item.StartDate.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><i class="fas fa-money-bill-alt me-2"></i>Budget</th>
+                                    <td>@item.Budget.ToString("F3") DT</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><i class="fas fa-clock me-2"></i>Duration</th>
+                                    <td>@item.Duration</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"><i class="fas fa-location-arrow me-2"></i>Destination</th>
+                                    <td>@item.Destination?.Name</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between align-items-center mt-3">
                             <a asp-action="Create" asp-route-packageId="@item.Id" asp-controller="Booking" class="btn btn-primary">Book Now</a>
-                            @if (User.IsInRole("Admin")){
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Remove</a>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a> 
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary">Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Remove</a>
+                                </div>
                             }
                         </div>
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            @if (!User.IsInRole("Admin"))
-            {
-                <div class="text-center">
-                <p>No packages available.</p>
             </div>
-            }
-            
         }
     </div>
 </div>

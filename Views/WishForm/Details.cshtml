@@ -4,63 +4,69 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container py-4">
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br> 
+    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
 
-<div>
-    <h4>WishForm</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Destination)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Destination)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DepartureDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DepartureDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Duration)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Duration)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Budget)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Budget)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Interests)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Interests)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdditionalNotes)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdditionalNotes)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SubmissionDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SubmissionDate)
-        </dd>
-        <dt class="col-sm-2">
-            Created By
-        </dt>
-        <dd class="col-sm-10">
-            @Model.CreatedBy?.UserName
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card mb-4 shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Whish Form</h4>
+            <div class="btn-group">
+                <a href="@Url.Action("Edit", "WishForm", new { id = Model.Id })" class="btn btn-secondary">Edit</a>
+                <a href="@Url.Action("Delete", "WishForm", new { id = Model.Id })" class="btn btn-danger">Delete</a>
+            </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <dl class="row">
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.Destination)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.Destination)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.DepartureDate)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.DepartureDate)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.Duration)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.Duration)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.Budget)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.FormattedBudget)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.Interests)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.Interests)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.AdditionalNotes)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.AdditionalNotes)
+                        </dd>
+                        <dt class = "col-sm-4">
+                            @Html.DisplayNameFor(model => model.SubmissionDate)
+                        </dt>
+                        <dd class = "col-sm-8">
+                            @Html.DisplayFor(model => model.SubmissionDate)
+                        </dd>
+
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>

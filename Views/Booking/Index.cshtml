@@ -39,21 +39,22 @@
 
     <div class="row justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <div class="col">
-            <div class="card shadow add-new-booking-card" style="width: 320px; height: 630px;">
-                <a asp-action="Index" asp-controller="Package" class="d-flex justify-content-center align-items-center h-100 text-decoration-none">
-                    <div class="text-center">
-                        <i class="fas fa-plus fa-2x"></i>
-                        <p class="mt-2">Book Now!</p>
+            <a asp-action="Index" asp-controller="Package" class="text-decoration-none">
+                <div class="card h-100 shadow" style="height: 100%;">
+                    <div class="card-body text-center d-flex align-items-center justify-content-center">
+                        <div>
+                            <i class="fas fa-plus fa-2x"></i>
+                            <p class="mt-2">Book Now!</p>
+                        </div> 
                     </div>
-                </a>
-            </div>
-
+                </div>
+            </a>
         </div>
 
         @if (userBookings.Any()){
             @foreach (var item in userBookings)
             {
-                <div class="col booking-item">
+                <div class="col">
                     <div class="card h-100 shadow">
                         <a href="@Url.Action("Details", new { id = item.Id })" class="position-relative">
                             <img src="@item.AssociatedPackage?.Destination?.ImageUrl" class="card-img-top" alt="@item.AssociatedPackage?.Destination?.Name">
@@ -71,16 +72,7 @@
                                     </tr>
                                     <tr>
                                         <th scope="row"><i class="fas fa-money-bill-alt me-2"></i>Total</th>
-                                        <td>
-                                            @if (item.TotalAmount.HasValue)
-                                            {
-                                                @($"{item.TotalAmount.Value:F3} DT")
-                                            }
-                                            else
-                                            {
-                                                <text>N/A</text>
-                                            }
-                                        </td>
+                                        <td>@($"{item.FormattedTotalAmount} ")</td>
                                     </tr>
                                     <tr>
                                         <th scope="row"><i class="fas fa-clock me-2"></i>Duration</th>

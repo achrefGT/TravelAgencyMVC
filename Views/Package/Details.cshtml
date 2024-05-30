@@ -26,6 +26,7 @@
             {
                 <div class="btn-group">
                     <a href="@Url.Action("Edit", "Package", new { id = Model.Id })" class="btn btn-secondary">Edit</a>
+                    <a href="@Url.Action("Delete", "Package", new { id = Model.Id })" class="btn btn-danger">Delete</a>
                     <a href="@Url.Action("Create", "Booking", new { packageId = Model.Id })" class="btn btn-primary">Book</a>
                 </div>
             }
@@ -48,7 +49,7 @@
                         <dt class="col-sm-4">Start Date</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.StartDate)</dd>
                         <dt class="col-sm-4">Budget</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Budget)</dd>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.FormattedBudget)</dd>
                         <dt class="col-sm-4">Duration</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.Duration)</dd>
                         <dt class="col-sm-4">Services</dt>
@@ -70,6 +71,8 @@
                             <dd class="col-sm-8">@Html.DisplayFor(model => model.LastModifiedAt)</dd>
                             <dt class="col-sm-4">Last Modified By</dt>
                             <dd class="col-sm-8">@Html.DisplayFor(model => model.LastModifiedBy.UserName)</dd>
+                            <dt class="col-sm-4">Coordinator</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Coordinator.Name)</dd>
                         }
                     </dl>
                 </div>
@@ -80,39 +83,81 @@
 </div>
 
 
-    @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
-    {
-        <div class="card mb-4 shadow">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h4>Coupons</h4>
-                <a href="@Url.Action("Create", "Coupon", new { packageId = Model.Id })" class="btn btn-primary">Create New Coupon</a>
-            </div>
-            <div class="card-body">
-                @if (Model.Coupons != null && Model.Coupons.Any())
-                {
-                   @foreach (var coupon in Model.Coupons)
-                    {
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">Code : @coupon.Code</h5>
-                                <p class="card-text">Discount Amount: @coupon.DiscountAmount.ToString("F3") DT</p>
-                                <p class="card-text">Expiration Date: @coupon.ExpirationDate.ToString("MMM dd, yyyy")</p>
-                                <div class="d-flex justify-content-end">
-                                    <a href="@Url.Action("Edit", "Coupon", new { id = coupon.Id })" class="btn btn-primary me-2">Edit</a>
-                                    <a href="@Url.Action("Delete", "Coupon", new { id = coupon.Id })" class="btn btn-danger me-2">Delete</a>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                }
-                else
-                {
-                    <p>No coupons available for this package.</p>
-                }
-            </div>
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <div class="card mb-4 shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Coupons</h4>
+            <a href="@Url.Action("Index", "Coupon")" class="btn btn-primary">Add Coupon</a>
         </div>
-    }
+        <div class="card-body">
+            @if (Model.Coupons != null && Model.Coupons.Any())
+            {
+                <div class="row justify-content-center">
+                    @foreach (var coupon in Model.Coupons)
+                    {
+                        @if (coupon.ExpirationDate.Date > DateTime.UtcNow.Date)
+                        {
+                            <div class="col-md-6 mb-4">
+                                <a asp-action="Details" asp-controller="Coupon" asp-route-id="@coupon.Id" class="text-decoration-none">
+                                    <div class="card coupon">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-4 border-right">
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <div class="card-body text-center">
+                                                        @if (coupon.Packages.Any())
+                                                        {
+                                                            @foreach (var package in coupon.Packages)
+                                                            {
+                                                                <span class="d-block"><strong>@package.Name</strong></span>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="d-block"><strong>No Packages</strong></span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body d-flex flex-column justify-content-between">
+                                                    <div>
+                                                        <div class="d-flex flex-row justify-content-end off">
+                                                            <h3>-@coupon.FormattedDiscountAmount</h3><span>OFF</span>
+                                                        </div>
+                                                        <div class="d-flex flex-row justify-content-between off px-3 p-2">
+                                                            <span>Promo code:</span><span class="border border-success px-3 rounded code">@coupon.Code</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end mt-3">
+                                                        <form asp-action="Edit" asp-route-id="@coupon.Id" method="get">
+                                                            <button type="submit" class="btn btn-primary">Edit</button>
+                                                        </form>
+                                                        <form asp-action="Delete" asp-route-id="@coupon.Id" method="get">
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer text-muted text-center small">
+                                            Expires on: @coupon.ExpirationDate.ToString("MM/dd/yyyy")
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <p>No coupons available.</p>
+            }
+        </div>
+    </div>
+}
+
 
 
 

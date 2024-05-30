@@ -44,7 +44,8 @@ namespace TransportMVC.Controllers
 
             var destination = await _context.Destinations
                 .Include(d => d.CreatedBy) 
-                .Include(d => d.LastModifiedBy) 
+                .Include(d => d.LastModifiedBy)
+                .Include(d => d.Packages) 
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (destination == null)

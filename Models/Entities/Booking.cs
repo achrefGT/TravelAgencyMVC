@@ -52,7 +52,13 @@ public class Booking
 
     public string? CouponCode { get; set; }
 
-    public decimal? TotalAmount { get; set; } 
+    public decimal TotalAmount { get; set; }
+
+    [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+    public string FormattedTotalAmount
+    {
+        get { return TotalAmount.ToString("F3") + " DT"; }
+    }
 
     public Booking()
     {
@@ -60,5 +66,6 @@ public class Booking
         CreatedAt = DateTime.UtcNow;
         LastModifiedAt = CreatedAt;
         State = BookingState.Pending;
+        TotalAmount = 0;
     }
 }
