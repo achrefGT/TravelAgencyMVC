@@ -28,8 +28,29 @@ namespace TransportMVC.Controllers
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Notifications.ToListAsync());
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            // Fetch notifications based on user role and clearance status
+            var notifications = User.IsInRole("Admin")
+                ? await _context.Notifications.Include(n => n.LastModifiedBy).OrderByDescending(n => n.LastModifiedAt).ToListAsync()
+                : await _context.Notifications.Include(n => n.LastModifiedBy)
+                    .Where(n => n.ReceiverId == currentUser.Id && !n.IsCleared)
+                    .OrderByDescending(n => n.LastModifiedAt)
+                    .ToListAsync();
+
+            // Mark all unread notifications for the current user as read
+            foreach (var notification in notifications.Where(n => n.ReceiverId == currentUser.Id && !n.IsRead))
+            {
+                notification.IsRead = true;
+                notification.Receiver.NbUnreadNotifications--;
+            }
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return View(notifications);
         }
+
 
         // GET: Notification/Details/5
         [AllowAnonymous]
@@ -55,14 +76,17 @@ namespace TransportMVC.Controllers
 
         // GET: Notification/Create
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string userId)
         {
-            // Fetch the list of users from the database
-            var users = await _context.Users.ToListAsync();
-            
-            ViewBag.Users = users;
+            ViewBag.Users = _userManager.Users.ToList();
 
-            return View();
+            var notification = new Notification();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                notification.ReceiverId = userId;
+            }
+
+            return View(notification);
         }
 
 
@@ -127,6 +151,9 @@ namespace TransportMVC.Controllers
 
                 // Set the Receiver property
                 notification.Receiver = receiver;
+
+                notification.Receiver.NbUnreadNotifications++;
+                
 
                 // Add the notification to the context and save changes
                 _context.Add(notification);
@@ -211,6 +238,15 @@ namespace TransportMVC.Controllers
                     // Set the Receiver property
                     originalNotification.Receiver = receiver;
 
+                    if(originalNotification.IsRead)
+                    {
+                        originalNotification.Receiver.NbUnreadNotifications++;
+                    }
+
+                    originalNotification.IsRead = false;
+
+                    
+
                     _context.Update(originalNotification);
                     await _context.SaveChangesAsync();
 
@@ -252,19 +288,41 @@ namespace TransportMVC.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var notification = await _context.Notifications.FindAsync(id);
+            var notification = await _context.Notifications.Include(n => n.Receiver).FirstOrDefaultAsync(n => n.Id == id);
             if (notification != null)
             {
+                if (!notification.IsRead && notification.Receiver != null)
+                {
+                    notification.Receiver.NbUnreadNotifications--;
+                }
                 _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool NotificationExists(Guid id)
         {
             return _context.Notifications.Any(e => e.Id == id);
         }
+
+        // POST: Notification/Clear/5
+        [HttpPost, ActionName("Clear")]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Clear(Guid id)
+        {
+            var notification = await _context.Notifications.FindAsync(id);
+            if (notification != null)
+            {
+                notification.IsCleared = true;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

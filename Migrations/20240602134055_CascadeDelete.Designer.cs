@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportMVC.Data;
 
@@ -11,9 +12,11 @@ using TransportMVC.Data;
 namespace TransportMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240602134055_CascadeDelete")]
+    partial class CascadeDelete
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -604,12 +607,12 @@ namespace TransportMVC.Migrations
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Bookings")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedBookings")
                         .HasForeignKey("LastModifiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssociatedPackage");
 
@@ -721,7 +724,7 @@ namespace TransportMVC.Migrations
                     b.HasOne("User", "CreatedBy")
                         .WithMany("SentNotifications")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedNotifications")
@@ -783,12 +786,12 @@ namespace TransportMVC.Migrations
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Reviews")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedReviews")
                         .HasForeignKey("LastModifiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("AssociatedPackage");
 

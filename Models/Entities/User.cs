@@ -34,6 +34,9 @@ public class User : IdentityUser
     public List<Coupon>? Coupons { get; set; }
     public List<Coupon>? ModifiedCoupons { get; set; }
 
+
+    public int NbUnreadNotifications { get; set; }
+
     
 
     
@@ -42,5 +45,6 @@ public class User : IdentityUser
     {
         CreatedAt = DateTime.UtcNow;
         LastModifiedAt = DateTime.UtcNow;
+        NbUnreadNotifications = 0;
     }
 }

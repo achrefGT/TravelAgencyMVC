@@ -5,25 +5,35 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Notification</h4>
+<div>
+    <a asp-action="Index" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Back</a> <br><br>
+    <h2>Send Notification</h2>
+</div>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-1"></div>
+    <div class="col-md-7">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-             <div class="form-group">
+            <div class="form-group">
                 <label asp-for="ReceiverId" class="control-label"></label>
                 <select asp-for="ReceiverId" class="form-control">
                     <option value="">Select User</option>
                     @foreach (var user in ViewBag.Users)
                     {
-                        <option value="@user.Id">@user.UserName</option>
+                        @if(user.Id == Model.ReceiverId) 
+                        {
+                            <option value="@user.Id" selected>@user.UserName</option>
+                        }
+                        else
+                        {
+                            <option value="@user.Id">@user.UserName</option>
+                        }
                     }
                 </select>
                 <span asp-validation-for="ReceiverId" class="text-danger"></span>
             </div>
+    
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
                 <textarea asp-for="Content" class="form-control"></textarea>
@@ -34,10 +44,6 @@
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

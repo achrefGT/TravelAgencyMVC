@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TransportMVC.Data;
 
@@ -11,9 +12,11 @@ using TransportMVC.Data;
 namespace TransportMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240601151747_Notification")]
+    partial class Notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -510,9 +513,6 @@ namespace TransportMVC.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("NbUnreadNotifications")
-                        .HasColumnType("int");
-
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
@@ -603,13 +603,11 @@ namespace TransportMVC.Migrations
 
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Bookings")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedBookings")
-                        .HasForeignKey("LastModifiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("LastModifiedById");
 
                     b.Navigation("AssociatedPackage");
 
@@ -622,8 +620,7 @@ namespace TransportMVC.Migrations
                 {
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Coupons")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedCoupons")
@@ -653,8 +650,7 @@ namespace TransportMVC.Migrations
                 {
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Destinations")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedDestinations")
@@ -720,13 +716,11 @@ namespace TransportMVC.Migrations
                 {
                     b.HasOne("User", "CreatedBy")
                         .WithMany("SentNotifications")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedNotifications")
-                        .HasForeignKey("LastModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("LastModifiedById");
 
                     b.HasOne("User", "Receiver")
                         .WithMany("ReceivedNotifications")
@@ -745,13 +739,11 @@ namespace TransportMVC.Migrations
                 {
                     b.HasOne("Coordinator", "Coordinator")
                         .WithMany("Packages")
-                        .HasForeignKey("CoordinatorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CoordinatorId");
 
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Packages")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("Destination", "Destination")
                         .WithMany("Packages")
@@ -782,13 +774,11 @@ namespace TransportMVC.Migrations
 
                     b.HasOne("User", "CreatedBy")
                         .WithMany("Reviews")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("User", "LastModifiedBy")
                         .WithMany("ModifiedReviews")
-                        .HasForeignKey("LastModifiedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("LastModifiedById");
 
                     b.Navigation("AssociatedPackage");
 

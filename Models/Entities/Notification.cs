@@ -21,13 +21,22 @@ public class Notification
     public DateTime LastModifiedAt { get; set; }
 
     public User? Receiver { get; set; }
+
     public User? CreatedBy { get; set; }
+
     public User? LastModifiedBy { get; set; }
+
+    public bool IsRead { get; set; }
+
+    public bool IsCleared { get; set; }
+
+
 
     public Notification()
     {
         Id = Guid.NewGuid();
         SentDate = DateTime.UtcNow;
         LastModifiedAt = SentDate;
+        IsRead = IsCleared = false;
     }
 }
